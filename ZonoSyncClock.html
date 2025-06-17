@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🌐 World Clock</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-image: url('https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1920&q=80');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      height: 100vh;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .clock-container {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 35px 45px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      width: 90%;
+      max-width: 400px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    .time {
+      font-size: 2.8rem;
+      font-weight: 600;
+      margin: 15px 0;
+      letter-spacing: 1px;
+    }
+
+    input[type="text"], select {
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 15px;
+    }
+
+    select {
+      background-color: #fff;
+      color: #000;
+    }
+
+    .location {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-top: 10px;
+    }
+
+    .error {
+      color: #ff6b6b;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+
+    ::placeholder {
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+
+<div class="clock-container">
+  <h1>🌍 World Clock</h1>
+  <input type="text" id="searchInput" placeholder="Enter city or country (e.g. India, Tokyo)">
+  <select id="dropdown">
+    <option value="">-- Choose a city/country --</option>
+    <option value="India">India</option>
+    <option value="USA">USA</option>
+    <option value="London">London</option>
+    <option value="Tokyo">Tokyo</option>
+    <option value="Germany">Germany</option>
+    <option value="France">France</option>
+    <option value="China">China</option>
+    <option value="Canada">Canada</option>
+    <option value="Australia">Australia</option>
+    <option value="Brazil">Brazil</option>
+    <option value="Dubai">Dubai</option>
+    <option value="Russia">Russia</option>
+    <option value="Singapore">Singapore</option>
+    <option value="South Africa">South Africa</option>
+    <option value="Mexico">Mexico</option>
+    <option value="Nepal">Nepal</option>
+    <option value="Malaysia">Malaysia</option>
+  </select>
+  <div class="time" id="time">--:--:--</div>
+  <div class="location" id="location">Your Timezone</div>
+  <div class="error" id="error"></div>
+</div>
+
+<script>
+  const timeElement = document.getElementById('time');
+  const locationElement = document.getElementById('location');
+  const errorElement = document.getElementById('error');
+  const input = document.getElementById('searchInput');
+  const dropdown = document.getElementById('dropdown');
+  let interval;
+
+  const cityTimeZoneMap = {
+    "india": "Asia/Kolkata",
+    "usa": "America/New_York",
+    "new york": "America/New_York",
+    "los angeles": "America/Los_Angeles",
+    "london": "Europe/London",
+    "germany": "Europe/Berlin",
+    "france": "Europe/Paris",
+    "china": "Asia/Shanghai",
+    "japan": "Asia/Tokyo",
+    "tokyo": "Asia/Tokyo",
+    "canada": "America/Toronto",
+    "australia": "Australia/Sydney",
+    "brazil": "America/Sao_Paulo",
+    "uae": "Asia/Dubai",
+    "dubai": "Asia/Dubai",
+    "russia": "Europe/Moscow",
+    "singapore": "Asia/Singapore",
+    "south africa": "Africa/Johannesburg",
+    "mexico": "America/Mexico_City",
+    "nepal": "Asia/Kathmandu",
+    "malaysia": "Asia/Kuala_Lumpur"
+  };
+
+  let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  updateTime(timezone);
+
+  function updateTime(tz) {
+    clearInterval(interval);
+    function showTime() {
+      const now = new Date().toLocaleTimeString("en-US", { timeZone: tz });
+      timeElement.textContent = now;
+    }
+    showTime();
+    interval = setInterval(showTime, 1000);
+  }
+
+  function handleLocationInput(query) {
+    const key = query.toLowerCase().trim();
+    const matchedTimeZone = cityTimeZoneMap[key];
+    if (matchedTimeZone) {
+      timezone = matchedTimeZone;
+      locationElement.textContent = matchedTimeZone.replace(/_/g, ' ');
+      errorElement.textContent = '';
+      updateTime(matchedTimeZone);
+    } else {
+      errorElement.textContent = '❌ Location not recognized. Try a major city or country.';
+    }
+  }
+
+  input.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') {
+      handleLocationInput(input.value);
+    }
+  });
+
+  dropdown.addEventListener('change', () => {
+    if (dropdown.value) {
+      handleLocationInput(dropdown.value);
+    }
+  });
+</script>
+
+</body>
+</html>
